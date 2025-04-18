@@ -29,7 +29,7 @@ const HeaderSlider = () => {
       imgSrc: assets.header_macbook_image,
     },
   ];
-
+ 
   const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
