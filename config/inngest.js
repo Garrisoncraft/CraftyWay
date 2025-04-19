@@ -6,7 +6,7 @@ import User from "@/models/User";
 export const inngest = new Inngest({ id: "craftyway-next" });
 
 //Ingest function to save user data to database
-export const syncUserCreation = inngest.creatFunction(
+export const syncUserCreation = inngest.createFunction(
     {
         id: 'sync-user-from-clerk'
     },
