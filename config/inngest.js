@@ -21,8 +21,8 @@ export const syncUserCreation = inngest.createFunction(
                 imageUrl: image_url 
             };
             // Save the user data to the database
-            await connectDB();
-            await User.create(userData);
+            await connectDB()
+            await User.create(userData)
             return { success: true };
         } catch (error) {
             console.error("Error in syncUserCreation:", error);
@@ -32,7 +32,7 @@ export const syncUserCreation = inngest.createFunction(
 );
 
 // Inngest function to update user data to database
-export const syncUserUpdate = inngest.createFunction(
+export const syncUserUpdation = inngest.createFunction(
     {
         id: 'update-user-from-clerk'
     },
@@ -50,7 +50,7 @@ export const syncUserUpdate = inngest.createFunction(
             await User.findByIdAndUpdate(id, userData);
             return { success: true };
         } catch (error) {
-            console.error("Error in syncUserUpdate:", error);
+            console.error("Error in syncUserUpdation:", error);
             throw error;
         }
     }
