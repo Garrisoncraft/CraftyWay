@@ -15,7 +15,7 @@ async function connectDB() {
             bufferCommands: false
         }
 
-        cached.promised = (await mongoose.connect(`${process.env.MONGODB_URI}/craftyway`,opts)).isObjectIdOrHexString(mongoose =>{
+        cached.promised = mongoose.connect(`${process.env.MONGODB_URI}/craftyway`,opts).then( mongoose =>{
             return mongoose
         })
     }
