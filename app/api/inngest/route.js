@@ -1,4 +1,4 @@
-import { syncUserCreation, syncUserDeletion, syncUserUpdate } from "@/config/inngest";
+import { inngest, syncUserCreation, syncUserDeletion, syncUserUpdate } from "@/config/inngest";
 import { serve } from "inngest/next";
 
 export const { GET, POST, PUT } = serve({
