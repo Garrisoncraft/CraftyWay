@@ -2,10 +2,17 @@
 import React, { useState } from "react";
 import { assets } from "@/assets/assets";
 import Image from "next/image";
+import { useAppContext } from "@/context/AppContext";
+import axios from "axios";
+import toast from "react-hot-toast";
+import Loading from "@/components/Loading";
 
 const AddProduct = () => {
 
+  const {getToken} = useAppContext()
+
   const [files, setFiles] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('Earphone');
@@ -15,11 +22,46 @@ const AddProduct = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const formData = new FormData()
+
+    formData.append('name', name)
+    formData.append('description', description)
+    formData.append('category', category)
+    formData.append('price', price)
+    formData.append('offerPrice', offerPrice)
+
+    for (let i = 0; i < files.length; i++) {
+    formData.append('images', files[i])      
+    }
+
+    setLoading(true);
+
+    try {
+      const token = await getToken()
+      const {data} = await axios.post('/api/product/add', formData, {headers: {Authorization: `Bearer ${token}`}})
+
+      if(data.success) {
+        setLoading(false)
+        toast.success(data.message)
+        setFiles([]);
+        setName(''); 
+        setDescription(''); 
+        setCategory('Earphone'); 
+        setPrice(''); 
+        setOfferPrice('');
+      } else {
+        toast.error(data.message);
+      }
+      
+    } catch (error) {
+      toast.error(error.messsage)
+    }
+
   };
 
   return (
     <div className="flex-1 min-h-screen flex flex-col justify-between">
-      <form onSubmit={handleSubmit} className="md:p-10 p-4 space-y-5 max-w-lg">
+      { loading ? <Loading/> : <form onSubmit={handleSubmit} className="md:p-10 p-4 space-y-5 max-w-lg">
         <div>
           <p className="text-base font-medium">Product Image</p>
           <div className="flex flex-wrap items-center gap-3 mt-2">
@@ -128,6 +170,7 @@ const AddProduct = () => {
           ADD
         </button>
       </form>
+}
       {/* <Footer /> */}
     </div>
   );
