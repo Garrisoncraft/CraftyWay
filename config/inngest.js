@@ -78,7 +78,7 @@ export const syncUserDeletion = inngest.createFunction(
 
 // Inngest function to create user order in database
 
-export const  createUserOrder = innegest.createFunction(
+export const  createUserOrder = inngest.createFunction(
     {
         id: 'create-user-order',
         batchEvents: {
@@ -87,7 +87,7 @@ export const  createUserOrder = innegest.createFunction(
         }        
     },
     {event: 'order/created'},
-    
+
     async ({events}) => {
         const orders = events.map((event)=>{
             return{
