@@ -1,11 +1,12 @@
-import { addressDummyData } from "@/assets/assets";
 import { useAppContext } from "@/context/AppContext";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import Loading from "./Loading";
 
 const OrderSummary = () => {
 
+  const [loading, setLoading] = useState(false);
   const { currency, router, getCartCount, getCartAmount, getToken, user, cartItems, setCartItems } = useAppContext()
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -38,6 +39,41 @@ const OrderSummary = () => {
   };
 
   const createOrder = async () => {
+    try {
+      if (!selectedAddress) {
+        return toast.error('Please Select an address')
+      }
+      let cartItemsArray = Object.keys(cartItems).map((key)=> ({product: key, quantity: cartItems[key]}))
+      cartItemsArray = cartItemsArray.filter(item => item.quantity > 0)
+
+      if (cartItemsArray.length === 0) {
+        toast.error('Cart is Empty')
+      }
+
+      setLoading(true);
+      const token  = await getToken()
+
+      const {data} = await axios.post('/api/order/create',{
+        address: selectedAddress._id,
+        items: cartItemsArray
+      }, {
+        headers: {Authorization: `Bearer ${token}`}
+      })
+      
+      if (data.success) {
+        setLoading(false);
+        toast.success(data.message)
+        setCartItems({})
+        router.push('/order-placed')
+
+      } else {
+        setLoading(false);
+        toast.error(data.message)
+      }
+    } catch (error) {
+      setLoading(false);
+      toast.error(error.message)
+    }
 
   }
 
@@ -135,9 +171,8 @@ const OrderSummary = () => {
           </div>
         </div>
       </div>
-
-      <button onClick={createOrder} className="w-full bg-orange-600 text-white py-3 mt-5 hover:bg-orange-700">
-        Place Order
+      <button onClick={createOrder} className="w-full bg-orange-600 text-white py-3 mt-5 hover:bg-orange-700" disabled = {loading}>
+       {loading? "Wait a sec..." : "Place Order" }
       </button>
     </div>
   );
